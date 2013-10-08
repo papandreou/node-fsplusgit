@@ -22,30 +22,34 @@ describe('FsPlusGit', function () {
             fsPlusGit = new FsPlusGit(fs);
         });
 
-        it('should support statSync on the .git folder itself', function () {
-            expect(fsPlusGit.statSync(pathToTestRepo).isDirectory(), 'to equal', true);
+        describe('#statSync()', function () {
+            it('should work on the .git folder itself', function () {
+                expect(fsPlusGit.statSync(pathToTestRepo).isDirectory(), 'to equal', true);
+            });
         });
 
-        it('should support readdirSync on the .git folder itself', function () {
-            var entries = fsPlusGit.readdirSync(pathToTestRepo);
-            expect(entries, 'to be an array');
-            expect(entries, 'to contain', 'gitFakeFs');
-        });
+        describe('#readdirSync()', function () {
+            it('should work on the .git folder itself', function () {
+                var entries = fsPlusGit.readdirSync(pathToTestRepo);
+                expect(entries, 'to be an array');
+                expect(entries, 'to contain', 'gitFakeFs');
+            });
 
-        it('should support readdirSync on the .git/gitFakeFs folder', function () {
-            var entries = fsPlusGit.readdirSync(Path.resolve(pathToTestRepo, 'gitFakeFs'));
-            expect(entries, 'to be an array');
-            expect(entries, 'to contain', 'branches');
-            expect(entries, 'to contain', 'index');
-            expect(entries, 'to contain', 'changesInIndex');
-            expect(entries, 'to contain', 'tags');
-            expect(entries, 'to contain', 'commits');
-        });
+            it('should work on the .git/gitFakeFs folder', function () {
+                var entries = fsPlusGit.readdirSync(Path.resolve(pathToTestRepo, 'gitFakeFs'));
+                expect(entries, 'to be an array');
+                expect(entries, 'to contain', 'branches');
+                expect(entries, 'to contain', 'index');
+                expect(entries, 'to contain', 'changesInIndex');
+                expect(entries, 'to contain', 'tags');
+                expect(entries, 'to contain', 'commits');
+            });
 
-        it('should throw if readdirSync is run on something below .git/gitFakeFs', function () {
-            expect(function () {
-                fsPlusGit.readdirSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches'));
-            }, 'to throw exception', 'FsPlusGit.readdirSync: Not implemented');
+            it('should throw if invoked on something below .git/gitFakeFs', function () {
+                expect(function () {
+                    fsPlusGit.readdirSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches'));
+                }, 'to throw exception', 'FsPlusGit.readdirSync: Not implemented');
+            });
         });
 
         ['stat', 'lstat'].forEach(function (methodName) {
