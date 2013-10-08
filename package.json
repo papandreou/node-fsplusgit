@@ -1,6 +1,6 @@
 {
   "name": "fsplusgit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wrap node.js' fs module and expose the contents of git repositories",
   "main": "lib/FsPlusGit.js",
   "devDependencies": {
