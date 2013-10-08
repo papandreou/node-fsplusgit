@@ -26,6 +26,18 @@ describe('FsPlusGit', function () {
             it('should work on the .git folder itself', function () {
                 expect(fsPlusGit.statSync(pathToTestRepo).isDirectory(), 'to equal', true);
             });
+
+            it('should work on the .git/gitFakeFs folder', function () {
+                expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs')).isDirectory(), 'to equal', true);
+            });
+
+            it('should work on the .git/gitFakeFs/branches folder', function () {
+                expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches')).isDirectory(), 'to equal', true);
+            });
+
+            it('should work on the .git/gitFakeFs/index folder', function () {
+                expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'index')).isDirectory(), 'to equal', true);
+            });
         });
 
         describe('#readdirSync()', function () {
