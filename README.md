@@ -94,18 +94,9 @@ var fs = require('fs'),
 require('fsplusgit').patchInPlace(fs);
 require('cachedfs').patchInPlace(fs);
 
-// node-cachedfs does not yet make use of an already cached response with a different encoding,
-// so we need to read both variants:
-function readFileAsBufferAndUtf8(fileName, cb) {
-    fs.readFile(fileName, function (err) {
-        if (err) return cb(err);
-        fs.readFile(fileName, 'utf-8', cb);
-    });
-}
-
 glob('/path/to/repo.git/gitFakeFs/HEAD/**/*.less', {stat: true}, function (err, lessFileNamesInHead) {
     if (err) throw err;
-    async.each(lessFileNamesInHead, readFileAsBufferAndUtf8, function (err) {
+    async.each(lessFileNamesInHead, fs.readFile, function (err) {
         if (err) throw err;
         // Now it's safe to require('fs').readFileSync() and .stat() any .less file in repo.git/gitFakeFs/HEAD/
 
