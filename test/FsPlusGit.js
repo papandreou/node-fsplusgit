@@ -40,6 +40,34 @@ describe('FsPlusGit', function () {
             });
         });
 
+        describe('#realpathSync()', function () {
+            it('should work on the .git folder itself', function () {
+                expect(fsPlusGit.realpathSync(pathToTestRepo), 'to equal', fs.realpathSync(pathToTestRepo));
+            });
+
+            it('should work on the .git/gitFakeFs folder', function () {
+                expect(
+                    fsPlusGit.realpathSync(Path.resolve(pathToTestRepo, 'gitFakeFs')),
+                    'to equal',
+                    Path.resolve(fs.realpathSync(pathToTestRepo), 'gitFakeFs')
+                );
+            });
+
+            it('should work on the .git/gitFakeFs/branches folder', function () {
+                expect(
+                    fsPlusGit.realpathSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches')),
+                    'to equal',
+                    Path.resolve(fs.realpathSync(pathToTestRepo), 'gitFakeFs', 'branches')
+                );
+            });
+
+            it('should throw ENOENT on .git/gitFakeFs/foobar', function () {
+                expect(function () {
+                    fsPlusGit.realpathSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'foobar'));
+                }, 'to throw exception', /ENOENT/);
+            });
+        });
+
         describe('#readdirSync()', function () {
             it('should work on the .git folder itself', function () {
                 var entries = fsPlusGit.readdirSync(pathToTestRepo);
