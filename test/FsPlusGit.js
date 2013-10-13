@@ -4,11 +4,18 @@ var expect = require('unexpected-sinon'),
     _ = require('underscore'),
     glob = require('glob'),
     Path = require('path'),
-    FsPlusGit = require('../lib/FsPlusGit');
+    FsPlusGit = require('../lib/FsPlusGit'),
+    fs = require('fs');
 
 describe('FsPlusGit', function () {
-    var pathToTestRepo = Path.resolve(__dirname, '..', 'node_modules', 'gitfakefs', 'test', 'testrepo.git'),
+    var pathToTestRepo = Path.resolve(__dirname, '..', 'node_modules', 'gitfakefs', 'test', 'testRepo.git'),
+        pathToTestRepoWithWorkingCopy = Path.resolve(pathToTestRepo, '..', 'testRepoWithWorkingCopy'),
         fsPlusGit;
+
+    // Use testRepo.git as the .git folder of the test repository that has a working copy:
+    before(function (done) {
+        require('ncp').ncp(pathToTestRepo, Path.resolve(pathToTestRepoWithWorkingCopy, '.git'), done);
+    });
 
     describe('applied to the built-in fs module', function () {
         var fs;
@@ -35,8 +42,16 @@ describe('FsPlusGit', function () {
                 expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches')).isDirectory(), 'to equal', true);
             });
 
+            it('should work on the .git/gitFakeFs/indexOrWorkingCopy folder', function () {
+                expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'indexOrWorkingCopy')).isDirectory(), 'to equal', true);
+            });
+
             it('should work on the .git/gitFakeFs/index folder', function () {
                 expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'index')).isDirectory(), 'to equal', true);
+            });
+
+            it('should work on the .git/gitFakeFs/indexOrWorkingCopy folder', function () {
+                expect(fsPlusGit.statSync(Path.resolve(pathToTestRepo, 'gitFakeFs', 'indexOrWorkingCopy')).isDirectory(), 'to equal', true);
             });
         });
 
@@ -80,6 +95,7 @@ describe('FsPlusGit', function () {
                 expect(entries, 'to be an array');
                 expect(entries, 'to contain', 'branches');
                 expect(entries, 'to contain', 'index');
+                expect(entries, 'to contain', 'indexOrWorkingCopy');
                 expect(entries, 'to contain', 'changesInIndex');
                 expect(entries, 'to contain', 'tags');
                 expect(entries, 'to contain', 'commits');
@@ -156,6 +172,13 @@ describe('FsPlusGit', function () {
                         done();
                     });
                 });
+
+                it('should work inside the .git/gitFakeFs/indexOrWorkingCopy folder on a git repo with a working copy', function (done) {
+                    fsPlusGit.stat(Path.resolve(pathToTestRepoWithWorkingCopy, '.git', 'gitFakeFs', 'indexOrWorkingCopy', 'untrackedFile.txt'), passError(done, function (stats) {
+                        expect(stats.isFile(), 'to equal', true);
+                        done();
+                    }));
+                });
             });
         });
 
@@ -171,7 +194,7 @@ describe('FsPlusGit', function () {
             it('should return the types of objects when applied to the virtual /gitFakeFs/ directory', function (done) {
                 fsPlusGit.readdir(Path.resolve(pathToTestRepo, 'gitFakeFs'), passError(done, function (entryNames) {
                     expect(entryNames, 'to be an array');
-                    expect(entryNames, 'to equal', ['HEAD', 'branches', 'tags', 'commits', 'index', 'changesInIndex']);
+                    expect(entryNames, 'to equal', ['HEAD', 'branches', 'tags', 'commits', 'index', 'indexOrWorkingCopy', 'changesInIndex']);
                     done();
                 }));
             });

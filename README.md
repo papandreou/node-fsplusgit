@@ -27,6 +27,9 @@ fsPlusGit.readdir('/path/to/repo.git/gitFakeFs/changesInIndex/', function (err, 
 fsPlusGit.readFile('/path/to/repo.git/gitFakeFs/changesInIndex/fileWithStagedChanges.txt', 'utf-8', function (err, stagedContents) {/*...*/});
 ```
 
+The `indexOrWorkingCopy` folder has the contents of the index shadowed
+by the untracked files in the working copy.
+
 You can also patch the `fs` module in-place to make every other module
 instantly capable of getting to the contents of your git
 repositories. Just make sure to do it before any other module might
@@ -60,6 +63,12 @@ which will produce something like:
   'index/stagedFile.txt',
   'index/subdir/',
   'index/subdir/stagedFileInSubdir.txt',
+  'indexOrWorkingCopy/',
+  'indexOrWorkingCopy/foo.txt',
+  'indexOrWorkingCopy/fileStagedForDeletion.txt',
+  'indexOrWorkingCopy/stagedFile.txt',
+  'indexOrWorkingCopy/subdir/',
+  'indexOrWorkingCopy/subdir/stagedFileInSubdir.txt',
   'changesInIndex/',
   'changesInIndex/stagedFile.txt',
   'changesInIndex/subdir/',
