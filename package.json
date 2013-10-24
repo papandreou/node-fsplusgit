@@ -29,7 +29,7 @@
   "license": "BSD",
   "dependencies": {
     "async": "=0.2.9",
-    "gitfakefs": "=0.2.1",
+    "gitfakefs": "=0.2.2",
     "memoizeasync": "=0.3.1",
     "passerror": "0.0.2",
     "underscore": "=1.5.2"
