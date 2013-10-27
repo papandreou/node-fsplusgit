@@ -10,6 +10,7 @@ var expect = require('unexpected-sinon'),
 describe('FsPlusGit', function () {
     var pathToTestRepo = Path.resolve(__dirname, '..', 'node_modules', 'gitfakefs', 'test', 'testRepo.git'),
         pathToTestRepoWithWorkingCopy = Path.resolve(pathToTestRepo, '..', 'testRepoWithWorkingCopy'),
+        pathToTestRepoWithoutSymlinksPointingOut = Path.resolve(__dirname, '..', 'node_modules', 'gitfakefs', 'test', 'testRepoWithoutSymlinksPointingOut.git'),
         fsPlusGit;
 
     // Use testRepo.git as the .git folder of the test repository that has a working copy:
@@ -108,6 +109,71 @@ describe('FsPlusGit', function () {
             });
         });
 
+        describe('#realpath()', function () {
+            it('should issue an ENOENT error for /gitFakeFs/HEAD/linkToNonExistingFileInParentDirectoryOutsideRepo as a directory', function (done) {
+                fsPlusGit.realpath(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToNonExistingFileInParentDirectoryOutsideRepo'), function (err) {
+                    expect(err, 'to be an', Error);
+                    expect(err.code, 'to equal', 'ENOENT');
+                    done();
+                });
+            });
+
+            it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory', function (done) {
+                fsPlusGit.realpath(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (realpath) {
+                    expect(realpath, 'to equal', fs.realpathSync(Path.resolve(pathToTestRepo, '..')));
+                    done();
+                }));
+            });
+
+            it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory heh', function (done) {
+                fsPlusGit.realpath(Path.resolve(pathToTestRepoWithWorkingCopy, '.git', 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (realpath) {
+                    expect(realpath, 'to equal', fs.realpathSync(Path.resolve(pathToTestRepo, '..')));
+                    done();
+                }));
+            });
+        });
+
+        describe('#stat()', function () {
+            it('should issue an ENOENT error for /gitFakeFs/HEAD/linkToNonExistingFileInParentDirectoryOutsideRepo as a directory', function (done) {
+                fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToNonExistingFileInParentDirectoryOutsideRepo'), function (err) {
+                    expect(err, 'to be an', Error);
+                    expect(err.code, 'to equal', 'ENOENT');
+                    done();
+                });
+            });
+
+            it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory', function (done) {
+                fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (stats) {
+                    expect(stats.isDirectory(), 'to be', true);
+                    expect(stats.isFile(), 'to be', false);
+                    expect(stats.isSymbolicLink(), 'to be', false);
+                    done();
+                }));
+            });
+        });
+
+        describe('#lstat()', function () {
+            it('should report /gitFakeFs/HEAD/linkToNonExistingFileInParentDirectoryOutsideRepo as a symbolic link', function (done) {
+                fsPlusGit.lstat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToNonExistingFileInParentDirectoryOutsideRepo'), passError(done, function (stats) {
+                    expect(stats.isDirectory(), 'to be', false);
+                    expect(stats.isFile(), 'to be', false);
+                    expect(stats.isSymbolicLink(), 'to be', true);
+                    done();
+                }));
+            });
+
+            it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory', function (done) {
+                fsPlusGit.lstat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (stats) {
+                    expect(stats.isDirectory(), 'to be', false);
+                    expect(stats.isFile(), 'to be', false);
+                    expect(stats.isSymbolicLink(), 'to be', true);
+                    done();
+                }));
+            });
+        });
+
+        // Common tests for stat and lstat:
+        // FIXME: stat is hardcoded!?
         ['stat', 'lstat'].forEach(function (methodName) {
             describe('#' + methodName + '()', function () {
                 it('should report /gitFakeFs/ as a directory', function (done) {
@@ -169,6 +235,7 @@ describe('FsPlusGit', function () {
                 it('should return an ENOENT error for an unsupported entry in /gitFakeFs/', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'foo'), function (err) {
                         expect(err, 'to be an', Error);
+                        expect(err.code, 'to equal', 'ENOENT');
                         done();
                     });
                 });
@@ -312,12 +379,12 @@ describe('FsPlusGit', function () {
         });
 
         it('should make the glob work on the gitFakeFs directory', function (done) {
-            require('glob')(Path.resolve(pathToTestRepo, 'gitFakeFs', '**', '*'), {mark: true, stat: true}, passError(done, function (fileNames) {
+            require('glob')(Path.join(pathToTestRepoWithoutSymlinksPointingOut, 'gitFakeFs', '**', '*'), {mark: true, stat: true}, passError(done, function (fileNames) {
                 expect(fileNames, 'to be an array');
-                expect(fileNames, 'to contain', Path.resolve(pathToTestRepo, 'gitFakeFs', 'commits', '39c5c09d660b1bac8eb66898e88f72907ccbb223', 'foo.txt'));
-                expect(fileNames, 'to contain', Path.resolve(pathToTestRepo, 'gitFakeFs', 'tags', 'myTag', 'symlinkToSymlinkToNonExistentFile'));
-                expect(fileNames, 'to contain', Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches', 'master', 'symlinkToSubdir/subsubdir/bar.txt'));
-                expect(fileNames, 'to contain', Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'symlinkToSubdir/subsubdir/bar.txt'));
+                expect(fileNames, 'to contain', Path.resolve(pathToTestRepoWithoutSymlinksPointingOut, 'gitFakeFs', 'commits', '39c5c09d660b1bac8eb66898e88f72907ccbb223', 'foo.txt'));
+                expect(fileNames, 'to contain', Path.resolve(pathToTestRepoWithoutSymlinksPointingOut, 'gitFakeFs', 'tags', 'myTag', 'symlinkToSymlinkToNonExistentFile'));
+                expect(fileNames, 'to contain', Path.resolve(pathToTestRepoWithoutSymlinksPointingOut, 'gitFakeFs', 'branches', 'master', 'symlinkToSubdir/subsubdir/bar.txt'));
+                expect(fileNames, 'to contain', Path.resolve(pathToTestRepoWithoutSymlinksPointingOut, 'gitFakeFs', 'HEAD', 'symlinkToSubdir/subsubdir/bar.txt'));
                 done();
             }));
         });
