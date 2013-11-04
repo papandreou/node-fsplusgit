@@ -150,6 +150,30 @@ describe('FsPlusGit', function () {
                     done();
                 }));
             });
+
+            it('should return ENOENT for notARepo.git/gitFakeFs', function (done) {
+                fsPlusGit.stat(Path.resolve(__dirname, 'notARepo.git', 'gitFakeFs'), function (err) {
+                    expect(err, 'to be an', Error);
+                    expect(err.code, 'to equal', 'ENOENT');
+                    done();
+                });
+            });
+
+            it('should return ENOENT for notARepo.git/gitFakeFs/branches as a directory', function (done) {
+                fsPlusGit.stat(Path.resolve(__dirname, 'notARepo.git', 'gitFakeFs', 'branches'), function (err) {
+                    expect(err, 'to be an', Error);
+                    expect(err.code, 'to equal', 'ENOENT');
+                    done();
+                });
+            });
+
+            it('should return ENOENT for notARepo.git/gitFakeFs/index', function (done) {
+                fsPlusGit.stat(Path.resolve(__dirname, 'notARepo.git', 'gitFakeFs', 'branches'), function (err) {
+                    expect(err, 'to be an', Error);
+                    expect(err.code, 'to equal', 'ENOENT');
+                    done();
+                });
+            });
         });
 
         describe('#lstat()', function () {
@@ -322,6 +346,13 @@ describe('FsPlusGit', function () {
                 fsPlusGit.readdir(__dirname, passError(done, function (entryNames) {
                     expect(entryNames, 'to be an array');
                     expect(entryNames, 'to contain', Path.basename(__filename));
+                    done();
+                }));
+            });
+
+            it.skip('should not include the gitFakeFs inside a .git folder that does not contain a git repo', function (done) {
+                fsPlusGit.readdir(Path.resolve(__dirname, 'notARepo.git'), passError(done, function (names) {
+                    expect(names, 'not to contain', 'gitFakeFs');
                     done();
                 }));
             });
