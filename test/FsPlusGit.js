@@ -144,9 +144,9 @@ describe('FsPlusGit', function () {
 
             it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory', function (done) {
                 fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (stats) {
-                    expect(stats.isDirectory(), 'to be', true);
-                    expect(stats.isFile(), 'to be', false);
-                    expect(stats.isSymbolicLink(), 'to be', false);
+                    expect(stats.isDirectory(), 'to be true');
+                    expect(stats.isFile(), 'to be false');
+                    expect(stats.isSymbolicLink(), 'to be false');
                     done();
                 }));
             });
@@ -179,18 +179,18 @@ describe('FsPlusGit', function () {
         describe('#lstat()', function () {
             it('should report /gitFakeFs/HEAD/linkToNonExistingFileInParentDirectoryOutsideRepo as a symbolic link', function (done) {
                 fsPlusGit.lstat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToNonExistingFileInParentDirectoryOutsideRepo'), passError(done, function (stats) {
-                    expect(stats.isDirectory(), 'to be', false);
-                    expect(stats.isFile(), 'to be', false);
-                    expect(stats.isSymbolicLink(), 'to be', true);
+                    expect(stats.isDirectory(), 'to be false');
+                    expect(stats.isFile(), 'to be false');
+                    expect(stats.isSymbolicLink(), 'to be true');
                     done();
                 }));
             });
 
             it('should report /gitFakeFs/HEAD/linkToParentDirectoryOutsideRepo as a directory', function (done) {
                 fsPlusGit.lstat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'linkToParentDirectoryOutsideRepo'), passError(done, function (stats) {
-                    expect(stats.isDirectory(), 'to be', false);
-                    expect(stats.isFile(), 'to be', false);
-                    expect(stats.isSymbolicLink(), 'to be', true);
+                    expect(stats.isDirectory(), 'to be false');
+                    expect(stats.isFile(), 'to be false');
+                    expect(stats.isSymbolicLink(), 'to be true');
                     done();
                 }));
             });
@@ -202,56 +202,56 @@ describe('FsPlusGit', function () {
             describe('#' + methodName + '()', function () {
                 it('should report /gitFakeFs/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/HEAD/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/HEAD/subdir/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'subdir'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/HEAD/foo.txt as a file', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'foo.txt'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', false);
-                        expect(stats.isFile(), 'to be', true);
+                        expect(stats.isDirectory(), 'to be false');
+                        expect(stats.isFile(), 'to be true');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/branches/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/branches/master/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches', 'master'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
 
                 it('should report /gitFakeFs/commits/738876c70f4f5243a6672def4233911678ce38db/ as a directory', function (done) {
                     fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'commits', '738876c70f4f5243a6672def4233911678ce38db'), passError(done, function (stats) {
-                        expect(stats.isDirectory(), 'to be', true);
-                        expect(stats.isFile(), 'to be', false);
+                        expect(stats.isDirectory(), 'to be true');
+                        expect(stats.isFile(), 'to be false');
                         done();
                     }));
                 });
