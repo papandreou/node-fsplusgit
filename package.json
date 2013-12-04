@@ -8,7 +8,7 @@
     "mocha": "=1.13.0",
     "ncp": "=0.4.2",
     "sinon": "=1.7.3",
-    "unexpected": "=1.0.4",
+    "unexpected": "=1.0.12",
     "unexpected-sinon": "=0.1.0"
   },
   "directories": {
