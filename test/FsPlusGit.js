@@ -197,11 +197,10 @@ describe('FsPlusGit', function () {
         });
 
         // Common tests for stat and lstat:
-        // FIXME: stat is hardcoded!?
         ['stat', 'lstat'].forEach(function (methodName) {
             describe('#' + methodName + '()', function () {
                 it('should report /gitFakeFs/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -209,7 +208,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/HEAD/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -217,7 +216,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/HEAD/subdir/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'subdir'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'subdir'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -225,7 +224,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/HEAD/foo.txt as a file', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'foo.txt'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'HEAD', 'foo.txt'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be false');
                         expect(stats.isFile(), 'to be true');
                         done();
@@ -233,7 +232,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/branches/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -241,7 +240,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/branches/master/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches', 'master'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'branches', 'master'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -249,7 +248,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should report /gitFakeFs/commits/738876c70f4f5243a6672def4233911678ce38db/ as a directory', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'commits', '738876c70f4f5243a6672def4233911678ce38db'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'commits', '738876c70f4f5243a6672def4233911678ce38db'), passError(done, function (stats) {
                         expect(stats.isDirectory(), 'to be true');
                         expect(stats.isFile(), 'to be false');
                         done();
@@ -257,7 +256,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should return an ENOENT error for an unsupported entry in /gitFakeFs/', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepo, 'gitFakeFs', 'foo'), function (err) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepo, 'gitFakeFs', 'foo'), function (err) {
                         expect(err, 'to be an', Error);
                         expect(err.code, 'to equal', 'ENOENT');
                         done();
@@ -265,7 +264,7 @@ describe('FsPlusGit', function () {
                 });
 
                 it('should work inside the .git/gitFakeFs/indexOrWorkingCopy folder on a git repo with a working copy', function (done) {
-                    fsPlusGit.stat(Path.resolve(pathToTestRepoWithWorkingCopy, '.git', 'gitFakeFs', 'indexOrWorkingCopy', 'untrackedFile.txt'), passError(done, function (stats) {
+                    fsPlusGit[methodName](Path.resolve(pathToTestRepoWithWorkingCopy, '.git', 'gitFakeFs', 'indexOrWorkingCopy', 'untrackedFile.txt'), passError(done, function (stats) {
                         expect(stats.isFile(), 'to equal', true);
                         done();
                     }));
